@@ -1,4 +1,4 @@
-package com.diewland.android.qr_pp_plus;
+package com.diewland.android.qr_pp_40;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

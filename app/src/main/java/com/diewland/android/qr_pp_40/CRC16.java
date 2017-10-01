@@ -1,4 +1,4 @@
-package com.diewland.android.qr_pp_plus;
+package com.diewland.android.qr_pp_40;
 
 // https://www.blognone.com/node/95133
 // http://introcs.cs.princeton.edu/java/61data/CRC16CCITT.java
