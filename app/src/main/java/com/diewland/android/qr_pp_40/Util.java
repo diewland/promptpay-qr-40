@@ -3,14 +3,18 @@ package com.diewland.android.qr_pp_40;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Base64;
+
+import java.io.ByteArrayOutputStream;
 
 public class Util {
 
-    //
+    // https://www.blognone.com/node/95133
     public static String gen_qr_text(String acc_id, String amount){
         String pp_acc_id = "";
         String pp_amount = "";
@@ -46,7 +50,6 @@ public class Util {
         // process checksum
         pp_chksum = CRC16.checksum(pp_str);
         pp_str += pp_chksum;
-
         return pp_str;
     }
 
@@ -105,4 +108,18 @@ public class Util {
             return temp;
         }
     }
+
+    // Bitmap <=> base64 String
+    // https://stackoverflow.com/a/8586244/466693
+    public static Bitmap b64tobitmap(String b64){
+        byte[] b = Base64.decode(b64, Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(b, 0, b.length);
+    }
+    public static String bitmap2b64(Bitmap bm){
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] b = baos.toByteArray();
+        return Base64.encodeToString(b, Base64.DEFAULT);
+    }
+
 }

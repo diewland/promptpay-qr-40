@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
                     intent.setAction(Intent.ACTION_GET_CONTENT);
                     startActivityForResult(Intent.createChooser(intent, "Select Logo"), PICK_IMAGE);
                 }
-                else {
+                else { // remove logo
                     bitmap_logo = null;
                     renderQR();
                     btn_logo.setText("ใส่โลโก้");
@@ -159,12 +159,18 @@ public class MainActivity extends AppCompatActivity {
 
         // restore input states
         sharedPref = getSharedPreferences("SAVE_STATE", MODE_PRIVATE);
-        String prev_acc_id = sharedPref.getString(STATE_ACC_ID, "");
-        String prev_amount = sharedPref.getString(STATE_AMOUNT, "");
-        String prev_remark = sharedPref.getString(STATE_REMARK, "");
-        if(!prev_acc_id.isEmpty()) tv_acc_id.setText(prev_acc_id);
-        if(!prev_amount.isEmpty()) tv_amount.setText(prev_amount);
-        if(!prev_remark.isEmpty()) tv_remark.setText(prev_remark);
+        String prev_acc_id = sharedPref.getString(STATE_ACC_ID, null);
+        String prev_amount = sharedPref.getString(STATE_AMOUNT, null);
+        String prev_remark = sharedPref.getString(STATE_REMARK, null);
+        String prev_logo   = sharedPref.getString(STATE_LOGO, null);
+        // set logo first..
+        if(prev_logo != null){
+            bitmap_logo = Util.b64tobitmap(prev_logo);
+        }
+        // when set text, renderQR will automatic execute
+        if(prev_acc_id != null) tv_acc_id.setText(prev_acc_id);
+        if(prev_amount != null) tv_amount.setText(prev_amount);
+        if(prev_remark != null) tv_remark.setText(prev_remark);
     }
 
     // render QR image
@@ -219,6 +225,10 @@ public class MainActivity extends AppCompatActivity {
         editor.putString(STATE_ACC_ID, tv_acc_id.getText().toString());
         editor.putString(STATE_AMOUNT, tv_amount.getText().toString());
         editor.putString(STATE_REMARK, tv_remark.getText().toString());
+        if(bitmap_logo != null){
+            String encodedImage = Util.bitmap2b64(bitmap_logo);
+            editor.putString(STATE_LOGO, encodedImage);
+        }
         editor.commit();
     }
 
