@@ -40,7 +40,7 @@ public class Util {
         }
 
         // build pp string
-        String pp_str = "00020101021229370016A000000677010111"
+        String pp_str = "00020101021129370016A000000677010111"
                       + pp_acc_id
                       + "5303764"
                       + pp_amount
