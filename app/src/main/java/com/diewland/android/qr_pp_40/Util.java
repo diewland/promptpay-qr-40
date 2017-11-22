@@ -1,16 +1,31 @@
 package com.diewland.android.qr_pp_40;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.net.Uri;
+import android.provider.ContactsContract;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Base64;
+import android.widget.TextView;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Util {
 
@@ -123,4 +138,75 @@ public class Util {
         return Base64.encodeToString(b, Base64.DEFAULT);
     }
 
+    // request permissions dialog
+    // https://stackoverflow.com/a/37184243/466693
+    public static boolean requestPermissions(Activity that, int request_code){
+        int contact = ContextCompat.checkSelfPermission(that, Manifest.permission.READ_CONTACTS);
+        int storage = ContextCompat.checkSelfPermission(that, Manifest.permission.READ_EXTERNAL_STORAGE);
+        List<String> listPermissionsNeeded = new ArrayList<>();
+
+        if (contact != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.READ_CONTACTS);
+        }
+        if (storage != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(that,listPermissionsNeeded.toArray
+                (new String[listPermissionsNeeded.size()]), request_code);
+            return false;
+        }
+        return true;
+    }
+
+    // get telephone number from Contact List ( in ActivityResult )
+    // https://stackoverflow.com/a/37614997/466693
+    public static void getTelNoFromContacts(Context ctx, ContentResolver cr, Intent data, final TextView tv) {
+        Cursor cursor = null;
+        String phoneNumber = "";
+        List<String> allNumbers = new ArrayList<String>();
+        int phoneIdx = 0;
+        try {
+            Uri result = data.getData();
+            String id = result.getLastPathSegment();
+            cursor = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "=?", new String[] { id }, null);
+            phoneIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DATA);
+            if (cursor.moveToFirst()) {
+                while (cursor.isAfterLast() == false) {
+                    phoneNumber = cursor.getString(phoneIdx);
+                    allNumbers.add(phoneNumber);
+                    cursor.moveToNext();
+                }
+            } else {
+                //no results actions
+            }
+        } catch (Exception e) {
+            //error actions
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            final CharSequence[] items = allNumbers.toArray(new String[allNumbers.size()]);
+            AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+            builder.setTitle("เลือกเบอร์โทร");
+            builder.setItems(items, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int item) {
+                    String selectedNumber = items[item].toString();
+                    selectedNumber = selectedNumber.replace("-", "");
+                    tv.setText(selectedNumber);
+                }
+            });
+            AlertDialog alert = builder.create();
+            if(allNumbers.size() > 1) {
+                alert.show();
+            } else {
+                String selectedNumber = phoneNumber.toString();
+                selectedNumber = selectedNumber.replace("-", "");
+                tv.setText(selectedNumber);
+            }
+            if (phoneNumber.length() == 0) {
+                //no numbers found actions
+            }
+        }
+    }
 }
