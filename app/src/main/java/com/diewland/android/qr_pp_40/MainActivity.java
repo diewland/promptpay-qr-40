@@ -1,20 +1,25 @@
 package com.diewland.android.qr_pp_40;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -27,6 +32,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
@@ -38,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String STATE_AMOUNT = "STATE_AMOUNT";
     private static final String STATE_REMARK = "STATE_REMARK";
     private static final String STATE_LOGO   = "STATE_LOGO";
+    private static final int PICK_CONTACT    = 100;
     private static final int PICK_IMAGE = 1;
     private static final int QR_SIZE = 512;
     private static final int LOGO_SIZE = 90;
@@ -48,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout ll_action;
     private Button btn_logo;
     private Button btn_share;
+    private ImageButton btn_tel;
     private ImageView img_qr;
 
     private Bitmap bitmap_qr;
@@ -65,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         ll_action = (LinearLayout)findViewById(R.id.action);
         btn_logo  = (Button)findViewById(R.id.logo);
         btn_share = (Button)findViewById(R.id.share);
+        btn_tel   = (ImageButton)findViewById(R.id.tel_no);
         img_qr    = (ImageView) findViewById(R.id.qr);
 
         // render qr-code on text-changed
@@ -102,6 +112,16 @@ public class MainActivity extends AppCompatActivity {
             }
             @Override
             public void afterTextChanged(Editable editable) {
+            }
+        });
+
+        // bind tel-no button
+        btn_tel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
+                startActivityForResult(intent, PICK_CONTACT);
             }
         });
 
@@ -253,6 +273,55 @@ public class MainActivity extends AppCompatActivity {
             }
             else {
                 Toast.makeText(this, "ไม่พบโลโก้ของคุณ กรุณาลองใหม่อีกครั้ง", Toast.LENGTH_LONG).show();
+            }
+        }
+        // https://stackoverflow.com/a/8612776/466693
+        else if((resultCode == RESULT_OK) && (requestCode == PICK_CONTACT)){
+            Cursor cursor = null;
+            String phoneNumber = "";
+            List<String> allNumbers = new ArrayList<String>();
+            int phoneIdx = 0;
+            try {
+                Uri result = data.getData();
+                String id = result.getLastPathSegment();
+                cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "=?", new String[] { id }, null);
+                phoneIdx = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DATA);
+                if (cursor.moveToFirst()) {
+                    while (cursor.isAfterLast() == false) {
+                        phoneNumber = cursor.getString(phoneIdx);
+                        allNumbers.add(phoneNumber);
+                        cursor.moveToNext();
+                    }
+                } else {
+                    //no results actions
+                }
+            } catch (Exception e) {
+                //error actions
+            } finally {
+                if (cursor != null) {
+                    cursor.close();
+                }
+                final CharSequence[] items = allNumbers.toArray(new String[allNumbers.size()]);
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Choose a number");
+                builder.setItems(items, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int item) {
+                        String selectedNumber = items[item].toString();
+                        selectedNumber = selectedNumber.replace("-", "");
+                        tv_acc_id.setText(selectedNumber);
+                    }
+                });
+                AlertDialog alert = builder.create();
+                if(allNumbers.size() > 1) {
+                    alert.show();
+                } else {
+                    String selectedNumber = phoneNumber.toString();
+                    selectedNumber = selectedNumber.replace("-", "");
+                    tv_acc_id.setText(selectedNumber);
+                }
+                if (phoneNumber.length() == 0) {
+                    //no numbers found actions
+                }
             }
         }
     }
