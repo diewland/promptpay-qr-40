@@ -248,6 +248,9 @@ public class MainActivity extends AppCompatActivity {
             String encodedImage = Util.bitmap2b64(bitmap_logo);
             editor.putString(STATE_LOGO, encodedImage);
         }
+        else {
+            editor.remove(STATE_LOGO);
+        }
         editor.commit();
     }
 
