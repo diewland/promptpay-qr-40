@@ -113,18 +113,26 @@ public class CalcActivity extends AppCompatActivity {
                 scr = scr.substring(0, scr.length()-1);
                 screen.setText(scr);
             }
-            calc_mod = null;
             mod.setText("");
+            calc_mod = null;
         }
-        else if(math_actions.contains(v)){ // TODO I'm here
-            mod.setText("÷");
+        else if(math_actions.contains(v)){ // +-x/
+            // TODO equal case
+            if(screen.getText().toString().length() > 0){
+                mod.setText(v);
+                calc_mod = v.equals("÷") ? "/" : v;
+            }
         }
         else if(v.equals("=")){ // equal
 
         }
         else {
-            // TODO if prev is ops, clear screen and start new value
-            screen.append(v);
+            if(calc_mod == null){ // value A
+                screen.append(v);
+            }
+            else { // value B
+
+            }
         }
     }
 }
