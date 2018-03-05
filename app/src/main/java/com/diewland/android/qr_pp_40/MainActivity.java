@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btn_logo;
     private Button btn_share;
     private ImageButton btn_tel;
+    private ImageButton btn_calc;
     private ImageView img_qr;
 
     private Bitmap bitmap_qr;
@@ -74,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         btn_logo  = (Button)findViewById(R.id.logo);
         btn_share = (Button)findViewById(R.id.share);
         btn_tel   = (ImageButton)findViewById(R.id.tel_no);
+        btn_calc  = (ImageButton)findViewById(R.id.calc);
         img_qr    = (ImageView) findViewById(R.id.qr);
 
         // render qr-code on text-changed
@@ -121,6 +123,15 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(Intent.ACTION_PICK);
                 intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
                 startActivityForResult(intent, PICK_CONTACT);
+            }
+        });
+
+        // bind calc
+        btn_calc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), CalcActivity.class);
+                startActivity(intent);
             }
         });
 
