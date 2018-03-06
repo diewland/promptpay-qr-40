@@ -173,6 +173,7 @@ public class CalcActivity extends AppCompatActivity {
             Intent intent = new Intent(CalcActivity.this, MainActivity.class);
             intent.putExtra("AMOUNT", screen.getText().toString());
             startActivity(intent);
+            finish();
         }
         else { // 1234567890.
            set_btn_equal();

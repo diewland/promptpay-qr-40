@@ -133,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, CalcActivity.class);
                 intent.putExtra("AMOUNT", tv_amount.getText().toString());
                 startActivity(intent);
+                finish();
             }
         });
 
