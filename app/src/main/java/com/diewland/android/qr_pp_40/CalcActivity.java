@@ -1,5 +1,7 @@
 package com.diewland.android.qr_pp_40;
 
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -35,18 +37,6 @@ public class CalcActivity extends AppCompatActivity {
     Button pad_multiply;
     Button pad_minus;
     Button pad_add;
-
-    List<String> math_actions = Arrays.asList(
-         "+",
-        "-",
-        "x",
-        "÷"
-    );
-
-    // calc
-    Double calc_a   = null;
-    Double calc_b   = null;
-    String calc_mod = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,41 +88,123 @@ public class CalcActivity extends AppCompatActivity {
             pad.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    String v = ((Button)view).getText().toString();
-                    handle_screen(v);
+                String scr = screen.getText().toString();
+                String v = ((Button)view).getText().toString();
+                handle_screen(scr, v);
                 }
             });
         }
     }
 
-    private void handle_screen(String v){
-        Log.d(TAG, "Input --> " + v);
-        if(v.equals("DEL")){ // delete
-            String scr = screen.getText().toString();
-            if(scr.length() > 0){
-                scr = scr.substring(0, scr.length()-1);
-                screen.setText(scr);
-            }
-            mod.setText("");
-            calc_mod = null;
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // load amount from previous screen
+        Bundle extras = getIntent().getExtras();
+        if(extras != null){
+            String amt = extras.getString("AMOUNT");
+            if(amt.length() == 0){ amt = "0"; }
+            screen.setText(amt);
         }
-        else if(math_actions.contains(v)){ // +-x/
-            // TODO equal case
-            if(screen.getText().toString().length() > 0){
+    }
+
+    // handle calculator logic
+    Double calc_a    = null;
+    Double calc_b    = null;
+    String calc_mod  = null;
+    String calc_prev = null;
+    private void set_btn_equal(){
+        pad_equal.setText("=");
+        pad_equal.setTextColor(Color.BLACK);
+    }
+    private void set_btn_ok(){
+        pad_equal.setText("OK");
+        pad_equal.setTextColor(Color.BLUE);
+    }
+    private void handle_screen(String scr, String v){
+
+        /*
+        Log.d(TAG, String.format("press : %s", v));
+        Log.d(TAG, String.format("screen : %s", scr));
+        Log.d(TAG, String.format("calc_a : %s", calc_a));
+        Log.d(TAG, String.format("calc_b : %s", calc_b));
+        Log.d(TAG, String.format("calc_mod : %s", calc_mod));
+        */
+
+        if(v.equals("DEL")){ // delete
+            scr = scr.substring(0, scr.length()-1);
+            if(scr.length() == 0){
+                scr = "0";
+                calc_a = null;
+                calc_b = null;
+                calc_mod = null;
+            }
+            screen.setText(scr);
+            mod.setText("");
+            set_btn_equal();
+        }
+        else if(Calc.is_math_ops(v)){ // +-x÷
+            if(scr.length() > 0){
+                if(calc_a != null){ // do equal action
+                    calc_b = Double.parseDouble(scr);
+                    String result = Calc.ops(calc_a, calc_b, calc_mod);
+                    screen.setText(result);
+                    calc_a = null;
+                    calc_b = null;
+                    set_btn_ok();
+                }
                 mod.setText(v);
-                calc_mod = v.equals("÷") ? "/" : v;
+                calc_mod  = v;
             }
         }
         else if(v.equals("=")){ // equal
-
+            if((calc_a != null)&&(calc_mod != null)&&(scr.length() > 0)){
+                calc_b = Double.parseDouble(scr);
+                String result = Calc.ops(calc_a, calc_b, calc_mod);
+                screen.setText(result);
+                calc_a = null;
+                calc_b = null;
+                calc_mod = null;
+                set_btn_ok();
+            }
         }
-        else {
-            if(calc_mod == null){ // value A
+        else if(v.equals("OK")){
+            Intent intent = new Intent(CalcActivity.this, MainActivity.class);
+            intent.putExtra("AMOUNT", screen.getText().toString());
+            startActivity(intent);
+        }
+        else { // 1234567890.
+           set_btn_equal();
+
+            // handle dot case
+            if(v.equals(".")){
+               if((scr.length() == 0) ||                    // 1. blank screen
+                 ((calc_mod != null) && (calc_a == null))){ // 2. assigned ops
+                    v = "0.";
+               }
+            }
+
+            // handle state & special cases
+            if( ("=".equals(calc_prev))     // reset when press number after =
+                || ("0".equals(scr))        // zero on screen
+            ){
+                screen.setText(v);
+            }
+            else if(calc_mod == null){      // calc_a
                 screen.append(v);
             }
-            else { // value B
-
+            else if(calc_mod != null){      // calc_b
+                if(calc_a == null) {
+                    calc_a = Double.parseDouble(scr);
+                    screen.setText(v);
+                    mod.setText("");
+                }
+                else {
+                    screen.append(v);
+                }
             }
         }
+        calc_prev = v;
     }
 }

@@ -32,7 +32,8 @@
                 android:ems="10"
                 android:inputType="numberDecimal"
                 android:textAlignment="textEnd"
-                android:textSize="@android:dimen/app_icon_size" />
+                android:textSize="@android:dimen/app_icon_size"
+                tools:text="0" />
 
         </FrameLayout>
 

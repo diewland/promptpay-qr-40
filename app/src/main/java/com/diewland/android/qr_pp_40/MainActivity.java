@@ -130,7 +130,8 @@ public class MainActivity extends AppCompatActivity {
         btn_calc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), CalcActivity.class);
+                Intent intent = new Intent(MainActivity.this, CalcActivity.class);
+                intent.putExtra("AMOUNT", tv_amount.getText().toString());
                 startActivity(intent);
             }
         });
@@ -263,6 +264,19 @@ public class MainActivity extends AppCompatActivity {
             editor.remove(STATE_LOGO);
         }
         editor.commit();
+    }
+
+    // get amount from calculator
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // load amount from previous screen
+        Bundle extras = getIntent().getExtras();
+        if(extras != null){
+            String amt = extras.getString("AMOUNT"); //, "0");
+            tv_amount.setText(amt);
+        }
     }
 
     @Override
