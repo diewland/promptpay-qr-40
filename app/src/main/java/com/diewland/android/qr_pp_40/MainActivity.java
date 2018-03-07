@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String STATE_LOGO   = "STATE_LOGO";
     private static final int PICK_CONTACT    = 100;
     private static final int PICK_IMAGE = 1;
+    private static final int PICK_AMOUNT = 2;
     private static final int QR_SIZE = 512;
     private static final int LOGO_SIZE = 90;
     private static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 101;
@@ -132,8 +133,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, CalcActivity.class);
                 intent.putExtra("AMOUNT", tv_amount.getText().toString());
-                startActivity(intent);
-                finish();
+                startActivityForResult(intent, PICK_AMOUNT);
             }
         });
 
@@ -267,19 +267,6 @@ public class MainActivity extends AppCompatActivity {
         editor.commit();
     }
 
-    // get amount from calculator
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        // load amount from previous screen
-        Bundle extras = getIntent().getExtras();
-        if(extras != null){
-            String amt = extras.getString("AMOUNT"); //, "0");
-            tv_amount.setText(amt);
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -306,6 +293,13 @@ public class MainActivity extends AppCompatActivity {
         // set telephone number from contact list
         else if((resultCode == RESULT_OK) && (requestCode == PICK_CONTACT)){
             Util.getTelNoFromContacts(MainActivity.this, getContentResolver(), data, tv_acc_id);
+        }
+        // get calculated amount from calculator
+        else if((resultCode == RESULT_OK) && (requestCode == PICK_AMOUNT)){
+            if(data != null){
+                String amt = data.getStringExtra("AMOUNT");
+                tv_amount.setText(amt);
+            }
         }
     }
 

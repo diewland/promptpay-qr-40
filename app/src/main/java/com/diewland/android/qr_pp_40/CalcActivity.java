@@ -170,9 +170,9 @@ public class CalcActivity extends AppCompatActivity {
             }
         }
         else if(v.equals("OK")){
-            Intent intent = new Intent(CalcActivity.this, MainActivity.class);
+            Intent intent = new Intent();
             intent.putExtra("AMOUNT", screen.getText().toString());
-            startActivity(intent);
+            setResult(RESULT_OK, intent);
             finish();
         }
         else { // 1234567890.
