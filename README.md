@@ -4,9 +4,8 @@
 
 ### Screenshots
 
-<img src='https://lh3.googleusercontent.com/3H6CBBXsMCou8euBiIKYgqYqv8pUvSpkie2AYxO0djerZ2hq-VUvsKd_fZm9EiN_-Q=h900-rw'>
-<img src='https://lh3.googleusercontent.com/PEggp0feaFS1y-6uyXsQyAHe0eN-94XojiRARf2RBDMTeGMrDTRMofimBIoixnmc42k=h900-rw'>
-<img src='https://lh3.googleusercontent.com/2cnQrb_B1_SpiD6pfWuA6ilYfDuAthsVpNoYVVXRSAaXavPYLDS6fY_j_FXR-jP3Z-Q=h900-rw'>
+<img src='https://lh3.googleusercontent.com/QjQbfEife5Cg7-0NG1X0FSPzlmldEPGrWP4aVF-_pdLTUNWYrrNwtftKMtYyA83w6TQ=w958-h954-rw'>
+<img src='https://lh3.googleusercontent.com/fBSvDhtfj0xneqbTN6RTO7-UrDGqIKnsnGRTe2QJ6gg8_BcNM1g3yKo8eknaTb_DPNE=w958-h954-rw'>
 <img src='https://lh3.googleusercontent.com/DHZRM16oBq9S5VPUxSl_FDyI1TbPrS3vldoC_JIRfTWUraqehT4F9t5xZtebv53frLk=h900-rw'>
 <img src='https://lh3.googleusercontent.com/YRdcKFEx88Yx6lfi9GDPpHEyc-ifCqQ38zQ9Tuczecu-HNBNkRf2WwrG0SmH1aBtjxPf=h900-rw'>
 
