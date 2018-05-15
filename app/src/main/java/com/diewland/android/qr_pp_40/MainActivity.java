@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int PICK_CONTACT    = 100;
     private static final int PICK_IMAGE = 1;
     private static final int PICK_AMOUNT = 2;
+    private static final int PICK_CAMERA = 3;
     private static final int QR_SIZE = 512;
     private static final int LOGO_SIZE = 90;
     private static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 101;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout ll_action;
     private Button btn_logo;
     private Button btn_share;
+    private ImageButton btn_camera;
     private ImageButton btn_tel;
     private ImageButton btn_calc;
     private ImageView img_qr;
@@ -75,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         ll_action = (LinearLayout)findViewById(R.id.action);
         btn_logo  = (Button)findViewById(R.id.logo);
         btn_share = (Button)findViewById(R.id.share);
+        btn_camera= (ImageButton)findViewById(R.id.camera);
         btn_tel   = (ImageButton)findViewById(R.id.tel_no);
         btn_calc  = (ImageButton)findViewById(R.id.calc);
         img_qr    = (ImageView) findViewById(R.id.qr);
@@ -114,6 +117,15 @@ public class MainActivity extends AppCompatActivity {
             }
             @Override
             public void afterTextChanged(Editable editable) {
+            }
+        });
+
+        // bind camera button
+        btn_camera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myIntent = new Intent(MainActivity.this, LivePreviewActivity.class);
+                startActivityForResult(myIntent, PICK_CAMERA);
             }
         });
 
@@ -299,6 +311,13 @@ public class MainActivity extends AppCompatActivity {
             if(data != null){
                 String amt = data.getStringExtra("AMOUNT");
                 tv_amount.setText(amt);
+            }
+        }
+        // get acc-id from camera
+        else if((resultCode == RESULT_OK) && (requestCode == PICK_CAMERA)){
+            if(data != null){
+                String aid = data.getStringExtra("ACC_ID");
+                tv_acc_id.setText(aid);
             }
         }
     }

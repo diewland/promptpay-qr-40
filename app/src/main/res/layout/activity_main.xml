@@ -29,11 +29,19 @@
                 android:inputType="number" />
 
             <ImageButton
-                android:id="@+id/tel_no"
-                android:layout_width="100dp"
+                android:id="@+id/camera"
+                android:layout_width="130dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:scaleType="fitStart"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/id_card" />
+
+            <ImageButton
+                android:id="@+id/tel_no"
+                android:layout_width="130dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:scaleType="fitCenter"
                 app:srcCompat="@drawable/phone" />
         </LinearLayout>
 

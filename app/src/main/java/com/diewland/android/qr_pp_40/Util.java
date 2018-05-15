@@ -143,6 +143,7 @@ public class Util {
     public static boolean requestPermissions(Activity that, int request_code){
         int contact = ContextCompat.checkSelfPermission(that, Manifest.permission.READ_CONTACTS);
         int storage = ContextCompat.checkSelfPermission(that, Manifest.permission.READ_EXTERNAL_STORAGE);
+        int camera = ContextCompat.checkSelfPermission(that, Manifest.permission.CAMERA);
         List<String> listPermissionsNeeded = new ArrayList<>();
 
         if (contact != PackageManager.PERMISSION_GRANTED) {
@@ -150,6 +151,9 @@ public class Util {
         }
         if (storage != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+        if (camera != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.CAMERA);
         }
         if (!listPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(that,listPermissionsNeeded.toArray
